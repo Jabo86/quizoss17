@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 34</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 34</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande (991-1020) con opzioni disposte casualmente
+        const questions = [
+            {
+                question: "Cos’è l’infarto miocardico acuto?",
+                options: ["Un accumulo di liquido nel cuore", "Un’ostruzione acuta di un’arteria coronaria", "Un’infezione del muscolo cardiaco"],
+                correct: "Un’ostruzione acuta di un’arteria coronaria",
+                explanation: "L’infarto miocardico acuto è un’ostruzione acuta di un’arteria coronaria, spesso dovuta a un trombo, che causa necrosi del muscolo cardiaco. Provoca dolore toracico oppressivo, dispnea e sudorazione. Non è un’infezione (miocardite) né un accumulo di liquido (versamento pericardico). Gli OSS devono monitorare i parametri vitali, garantire la posizione semi-seduta, somministrare ossigeno se prescritto e segnalare sintomi come ipotensione o aritmie."
+            },
+            {
+                question: "Quale è un segno tipico dell’infarto miocardico acuto?",
+                options: ["Ittero", "Dolore toracico oppressivo", "Poliuria"],
+                correct: "Dolore toracico oppressivo",
+                explanation: "Il dolore toracico oppressivo, spesso irradiato al braccio sinistro o alla mandibola, è un segno tipico dell’infarto miocardico acuto, accompagnato da dispnea e sudorazione fredda. L’ittero (colorazione giallastra della pelle) e la poliuria (aumento della produzione di urina) non sono correlati. Gli OSS devono osservare l’intensità del dolore, monitorare la pressione arteriosa, garantire il comfort e segnalare all’infermiere sintomi come sincope o tachicardia."
+            },
+            {
+                question: "Cos’è l’insufficienza cardiaca?",
+                options: ["Un’infezione del cuore", "Una ridotta capacità del cuore di pompare sangue", "Un accumulo di liquido nei polmoni"],
+                correct: "Una ridotta capacità del cuore di pompare sangue",
+                explanation: "L’insufficienza cardiaca è una condizione in cui il cuore non riesce a pompare sangue adeguatamente, spesso causata da infarto, ipertensione o cardiomiopatie. Provoca dispnea, edema e stanchezza. Non è un’infezione (endocardite) né un accumulo di liquido (edema polmonare, che è una conseguenza). Gli OSS devono monitorare il peso, controllare l’edema, garantire una dieta a basso contenuto di sodio e segnalare sintomi come dispnea o confusione."
+            },
+            {
+                question: "Quale è un segno tipico dell’insufficienza cardiaca?",
+                options: ["Edema periferico", "Oliguria", "Ittero"],
+                correct: "Edema periferico",
+                explanation: "L’edema periferico, spesso agli arti inferiori, è un segno tipico dell’insufficienza cardiaca, dovuto alla ritenzione di liquidi. È accompagnato da dispnea e stanchezza. L’oliguria (ridotta produzione di urina) può verificarsi in fasi avanzate, mentre l’ittero (colorazione giallastra della pelle) non è correlato. Gli OSS devono misurare la circonferenza degli arti, monitorare il peso, garantire la posizione semi-seduta e segnalare all’infermiere sintomi come tachipnea o cianosi."
+            },
+            {
+                question: "Cos’è l’ipertensione arteriosa?",
+                options: ["Un accumulo di liquido nei vasi", "Un aumento persistente della pressione arteriosa", "Un’infezione dei vasi sanguigni"],
+                correct: "Un aumento persistente della pressione arteriosa",
+                explanation: "L’ipertensione arteriosa è un aumento persistente della pressione arteriosa oltre i valori normali (≥140/90 mmHg), spesso causata da fattori genetici, obesità o stress. Può essere asintomatica o provocare cefalea e vertigini. Non è un’infezione né un accumulo di liquido. Gli OSS devono misurare regolarmente la pressione, promuovere una dieta a basso contenuto di sodio, monitorare i sintomi e segnalare valori anomali o sintomi come epistassi."
+            },
+            {
+                question: "Quale è un segno tipico dell’ipertensione arteriosa grave?",
+                options: ["Poliuria", "Cefalea occipitale", "Ittero"],
+                correct: "Cefalea occipitale",
+                explanation: "La cefalea occipitale, spesso pulsante e mattutina, è un segno tipico dell’ipertensione arteriosa grave, accompagnata da vertigini o visione offuscata. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono misurare la pressione arteriosa, garantire il riposo, monitorare i sintomi e segnalare all’infermiere valori molto elevati o sintomi come confusione."
+            },
+            {
+                question: "Cos’è l’aritmia cardiaca?",
+                options: ["Un accumulo di liquido nel cuore", "Un’alterazione del ritmo cardiaco", "Un’infezione del muscolo cardiaco"],
+                correct: "Un’alterazione del ritmo cardiaco",
+                explanation: "L’aritmia cardiaca è un’alterazione del ritmo cardiaco, che può essere troppo rapido (tachicardia), lento (bradicardia) o irregolare (fibrillazione). Provoca palpitazioni, vertigini o sincope. Non è un’infezione (miocardite) né un accumulo di liquido (versamento pericardico). Gli OSS devono monitorare il polso, osservare i sintomi, garantire il riposo e segnalare aritmie, svenimenti o dispnea."
+            },
+            {
+                question: "Quale è un segno tipico della fibrillazione atriale?",
+                options: ["Ittero", "Palpitazioni irregolari", "Oliguria"],
+                correct: "Palpitazioni irregolari",
+                explanation: "Le palpitazioni irregolari, spesso accompagnate da stanchezza o dispnea, sono un segno tipico della fibrillazione atriale, un’aritmia comune. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono controllare il polso, monitorare i parametri vitali, garantire la somministrazione di anticoagulanti se prescritti e segnalare all’infermiere sintomi come sincope o dolore toracico."
+            },
+            {
+                question: "Cos’è l’angina pectoris?",
+                options: ["Un’infezione del cuore", "Un dolore toracico da ischemia miocardica", "Un accumulo di liquido nei polmoni"],
+                correct: "Un dolore toracico da ischemia miocardica",
+                explanation: "L’angina pectoris è un dolore toracico causato da ischemia miocardica temporanea, spesso scatenata da sforzo o stress. È reversibile e alleviata dal riposo o dalla nitroglicerina. Non è un’infezione né un accumulo di liquido (edema polmonare). Gli OSS devono monitorare il dolore, garantire il riposo, assistere nella somministrazione di nitroglicerina e segnalare sintomi come dispnea o dolore persistente."
+            },
+            {
+                question: "Quale è un segno tipico dell’angina pectoris?",
+                options: ["Dolore toracico alleviato dal riposo", "Poliuria", "Ittero"],
+                correct: "Dolore toracico alleviato dal riposo",
+                explanation: "Il dolore toracico alleviato dal riposo, spesso oppressivo e irradiato, è un segno tipico dell’angina pectoris, dovuto alla ridotta perfusione miocardica. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare la durata del dolore, garantire la posizione comoda, monitorare i parametri vitali e segnalare all’infermiere sintomi come tachicardia o sudorazione."
+            },
+            {
+                question: "Cos’è la miocardite?",
+                options: ["Un accumulo di liquido nel cuore", "Un’infiammazione del muscolo cardiaco", "Un’ostruzione delle arterie coronarie"],
+                correct: "Un’infiammazione del muscolo cardiaco",
+                explanation: "La miocardite è un’infiammazione del muscolo cardiaco, spesso causata da virus, batteri o malattie autoimmuni. Provoca dolore toracico, aritmie e stanchezza. Non è un’ostruzione coronarica (infarto) né un accumulo di liquido (versamento pericardico). Gli OSS devono monitorare i parametri vitali, garantire il riposo, osservare i sintomi e segnalare aritmie, febbre o dispnea."
+            },
+            {
+                question: "Quale è un segno tipico della miocardite?",
+                options: ["Ittero", "Fatica e aritmie", "Oliguria"],
+                correct: "Fatica e aritmie",
+                explanation: "La fatica e le aritmie, spesso accompagnate da dolore toracico o febbre, sono segni tipici della miocardite, dovuta all’infiammazione del miocardio. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono controllare il polso, monitorare la temperatura, garantire il comfort e segnalare all’infermiere sintomi come sincope o tachicardia."
+            },
+            {
+                question: "Cos’è il versamento pericardico?",
+                options: ["Un’infiammazione del muscolo cardiaco", "Un accumulo di liquido nello spazio pericardico", "Un’ostruzione delle arterie coronarie"],
+                correct: "Un accumulo di liquido nello spazio pericardico",
+                explanation: "Il versamento pericardico è un accumulo di liquido nello spazio pericardico, spesso causato da infezioni, traumi o tumori. Provoca dolore toracico, dispnea e possibile tamponamento cardiaco. Non è un’infiammazione (miocardite) né un’ostruzione coronarica (infarto). Gli OSS devono monitorare i parametri vitali, mantenere la posizione semi-seduta, osservare i sintomi e segnalare segni di tamponamento come ipotensione o polso paradosso."
+            },
+            {
+                question: "Quale è un segno tipico del versamento pericardico?",
+                options: ["Dispnea e dolore toracico", "Poliuria", "Ittero"],
+                correct: "Dispnea e dolore toracico",
+                explanation: "La dispnea e il dolore toracico, spesso aggravati dalla posizione supina, sono segni tipici del versamento pericardico, dovuti alla compressione del cuore. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono monitorare la frequenza respiratoria, garantire la posizione ortopnoica, controllare i parametri vitali e segnalare all’infermiere sintomi come tachicardia o cianosi."
+            },
+            {
+                question: "Cos’è il tamponamento cardiaco?",
+                options: ["Un accumulo di liquido nei polmoni", "Una compressione acuta del cuore da liquido pericardico", "Un’infezione del cuore"],
+                correct: "Una compressione acuta del cuore da liquido pericardico",
+                explanation: "Il tamponamento cardiaco è una compressione acuta del cuore causata da un accumulo rapido di liquido nello spazio pericardico, che impedisce il riempimento cardiaco. Provoca ipotensione, tachicardia e polso paradosso. Non è un’infezione né un accumulo di liquido nei polmoni (edema polmonare). Gli OSS devono monitorare i parametri vitali, mantenere la posizione semi-seduta, garantire il riposo e segnalare sintomi come cianosi o sincope."
+            },
+            {
+                question: "Quale è un segno tipico del tamponamento cardiaco?",
+                options: ["Ittero", "Polso paradosso", "Oliguria"],
+                correct: "Polso paradosso",
+                explanation: "Il polso paradosso, ovvero una diminuzione della pressione arteriosa sistolica durante l’inspirazione, è un segno tipico del tamponamento cardiaco, accompagnato da ipotensione e tachicardia. L’oliguria (ridotta produzione di urina) può essere secondaria, mentre l’ittero (colorazione giallastra della pelle) non è correlato. Gli OSS devono monitorare la pressione arteriosa, osservare la respirazione, garantire il comfort e segnalare all’infermiere sintomi come dispnea o sincope."
+            },
+            {
+                question: "Cos’è l’endocardite?",
+                options: ["Un accumulo di liquido nel cuore", "Un’infezione delle valvole cardiache", "Un’ostruzione delle arterie coronarie"],
+                correct: "Un’infezione delle valvole cardiache",
+                explanation: "L’endocardite è un’infezione delle valvole cardiache o dell’endocardio, spesso causata da batteri (es. Staphylococcus aureus). Provoca febbre, soffi cardiaci, embolie periferiche e stanchezza. Non è un’ostruzione coronarica (infarto) né un accumulo di liquido (versamento pericardico). Gli OSS devono monitorare la temperatura, osservare i sintomi, garantire l’igiene e segnalare segni come petecchie o febbre persistente."
+            },
+            {
+                question: "Quale è un segno tipico dell’endocardite?",
+                options: ["Febbre con soffio cardiaco", "Poliuria", "Ittero"],
+                correct: "Febbre con soffio cardiaco",
+                explanation: "La febbre con soffio cardiaco, spesso accompagnata da stanchezza o embolie periferiche, è un segno tipico dell’endocardite, dovuta all’infezione valvolare. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono controllare la temperatura, monitorare i parametri vitali, osservare la cute per petecchie e segnalare all’infermiere sintomi come dispnea o confusione."
+            },
+            {
+                question: "Cos’è la trombosi venosa profonda?",
+                options: ["Un’infezione dei vasi sanguigni", "Un coagulo in una vena profonda", "Un accumulo di liquido nei polmoni"],
+                correct: "Un coagulo in una vena profonda",
+                explanation: "La trombosi venosa profonda (TVP) è la formazione di un coagulo in una vena profonda, spesso nelle gambe, causata da immobilità, traumi o ipercoagulabilità. Provoca edema, dolore e arrossamento. Non è un’infezione né un accumulo di liquido (edema polmonare). Gli OSS devono monitorare l’edema, garantire la mobilizzazione, applicare calze elastiche e segnalare sintomi come dispnea o arrossamento grave."
+            },
+            {
+                question: "Quale è un segno tipico della trombosi venosa profonda?",
+                options: ["Ittero", "Edema unilaterale della gamba", "Oliguria"],
+                correct: "Edema unilaterale della gamba",
+                explanation: "L’edema unilaterale della gamba, spesso accompagnato da dolore e arrossamento, è un segno tipico della trombosi venosa profonda, dovuto all’ostruzione venosa. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono misurare la circonferenza degli arti, monitorare la cute, garantire la mobilizzazione e segnalare all’infermiere sintomi come febbre o dispnea."
+            },
+            {
+                question: "Cos’è l’aneurisma aortico?",
+                options: ["Un accumulo di liquido nell’aorta", "Un allargamento patologico dell’aorta", "Un’infezione dell’aorta"],
+                correct: "Un allargamento patologico dell’aorta",
+                explanation: "L’aneurisma aortico è un allargamento patologico della parete dell’aorta, spesso causato da ipertensione o aterosclerosi. Può essere asintomatico o provocare dolore toracico/addominale e rischio di rottura. Non è un’infezione né un accumulo di liquido. Gli OSS devono monitorare i parametri vitali, osservare i sintomi, garantire il riposo e segnalare segni di rottura come ipotensione o dolore severo."
+            },
+            {
+                question: "Quale è un segno tipico di un aneurisma aortico addominale?",
+                options: ["Poliuria", "Massa pulsante addominale", "Ittero"],
+                correct: "Massa pulsante addominale",
+                explanation: "La massa pulsante addominale, spesso rilevata alla palpazione, è un segno tipico dell’aneurisma aortico addominale, accompagnata da possibile dolore lombare. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono monitorare la pressione arteriosa, osservare l’addome, garantire il comfort e segnalare all’infermiere sintomi come ipotensione o dolore acuto."
+            },
+            {
+                question: "Cos’è lo shock cardiogeno?",
+                options: ["Un’infezione del cuore", "Una grave riduzione della gittata cardiaca", "Un accumulo di liquido nei polmoni"],
+                correct: "Una grave riduzione della gittata cardiaca",
+                explanation: "Lo shock cardiogeno è una grave riduzione della gittata cardiaca, spesso causata da infarto miocardico o miocardite, che provoca ipotensione, tachicardia e ipoperfusione. Non è un’infezione né un accumulo di liquido (edema polmonare, che può essere una conseguenza). Gli OSS devono monitorare i parametri vitali, garantire la posizione supina con gambe sollevate, somministrare ossigeno se prescritto e segnalare sintomi come cianosi o confusione."
+            },
+            {
+                question: "Quale è un segno tipico dello shock cardiogeno?",
+                options: ["Ipotensione con tachicardia", "Oliguria", "Ittero"],
+                correct: "Ipotensione con tachicardia",
+                explanation: "L’ipotensione con tachicardia, spesso accompagnata da cute fredda e sudorazione, è un segno tipico dello shock cardiogeno, dovuto alla ridotta perfusione. L’oliguria (ridotta produzione di urina) può essere secondaria, mentre l’ittero (colorazione giallastra della pelle) non è correlato. Gli OSS devono monitorare la pressione arteriosa, osservare la cute, garantire il comfort e segnalare all’infermiere sintomi come dispnea o sincope."
+            },
+            {
+                question: "Cos’è l’elettrocardiogramma (ECG)?",
+                options: ["Un accumulo di liquido nel cuore", "Un esame per valutare l’attività elettrica del cuore", "Un’infezione del muscolo cardiaco"],
+                correct: "Un esame per valutare l’attività elettrica del cuore",
+                explanation: "L’elettrocardiogramma (ECG) è un esame non invasivo che registra l’attività elettrica del cuore, utilizzato per diagnosticare aritmie, ischemia o infarto. Non è un’infezione né un accumulo di liquido. Gli OSS devono preparare il paziente, garantire la corretta applicazione degli elettrodi, monitorare il comfort e segnalare sintomi come dolore toracico o palpitazioni durante l’esame."
+            },
+            {
+                question: "Quale è un’indicazione per eseguire un elettrocardiogramma?",
+                options: ["Poliuria", "Diagnosi di aritmie", "Ittero"],
+                correct: "Diagnosi di aritmie",
+                explanation: "La diagnosi di aritmie è un’indicazione tipica per eseguire un elettrocardiogramma, che rileva alterazioni del ritmo cardiaco. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono preparare il paziente, garantire un ambiente calmo, monitorare i sintomi durante l’ECG e segnalare all’infermiere sintomi come sincope o dispnea."
+            },
+            {
+                question: "Cos’è la coronarografia?",
+                options: ["Un’infezione delle arterie coronarie", "Un esame per visualizzare le arterie coronarie", "Un accumulo di liquido nel cuore"],
+                correct: "Un esame per visualizzare le arterie coronarie",
+                explanation: "La coronarografia è un esame invasivo che utilizza un mezzo di contrasto per visualizzare le arterie coronarie, diagnosticando ostruzioni o stenosi. Non è un’infezione né un accumulo di liquido. Gli OSS devono preparare il paziente, monitorare il sito di accesso post-procedura, garantire l’igiene e segnalare sintomi come sanguinamento o dolore toracico."
+            },
+            {
+                question: "Quale è una complicanza tipica post-coronarografia?",
+                options: ["Ittero", "Ematoma al sito di accesso", "Oliguria"],
+                correct: "Ematoma al sito di accesso",
+                explanation: "L’ematoma al sito di accesso, spesso nell’inguine o nel polso, è una complicanza tipica post-coronarografia, dovuta alla puntura arteriosa. L’oliguria (ridotta produzione di urina) può essere secondaria in casi rari, mentre l’ittero (colorazione giallastra della pelle) non è correlato. Gli OSS devono ispezionare il sito di accesso, monitorare i parametri vitali, garantire il riposo e segnalare all’infermiere sintomi come sanguinamento o ipotensione."
+            },
+            {
+                question: "Cos’è la defibrillazione?",
+                options: ["Un accumulo di liquido nel cuore", "Un trattamento per ripristinare il ritmo cardiaco", "Un’infezione del muscolo cardiaco"],
+                correct: "Un trattamento per ripristinare il ritmo cardiaco",
+                explanation: "La defibrillazione è un trattamento che utilizza una scarica elettrica per ripristinare il ritmo cardiaco in caso di aritmie letali, come la fibrillazione ventricolare. Non è un’infezione né un accumulo di liquido. Gli OSS devono preparare il defibrillatore, garantire la sicurezza durante la procedura, monitorare i parametri vitali e segnalare sintomi come sincope o aritmie persistenti."
+            },
+            {
+                question: "Quale è un’indicazione per la defibrillazione?",
+                options: ["Poliuria", "Fibrillazione ventricolare", "Ittero"],
+                correct: "Fibrillazione ventricolare",
+                explanation: "La fibrillazione ventricolare è un’indicazione tipica per la defibrillazione, che richiede una scarica elettrica immediata per prevenire l’arresto cardiaco. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono assistere nella preparazione del defibrillatore, garantire la sicurezza, monitorare il paziente e segnalare all’infermiere sintomi come assenza di polso o cianosi."
+            },
+            {
+                question: "Cos’è la rianimazione cardiopolmonare (RCP)?",
+                options: ["Un’infezione del cuore", "Una tecnica per ripristinare la circolazione e la respirazione", "Un accumulo di liquido nei polmoni"],
+                correct: "Una tecnica per ripristinare la circolazione e la respirazione",
+                explanation: "La rianimazione cardiopolmonare (RCP) è una tecnica di emergenza utilizzata per ripristinare la circolazione e la respirazione in caso di arresto cardiaco, tramite compressioni toraciche e ventilazioni. Non è un’infezione né un accumulo di liquido. Gli OSS devono eseguire le compressioni toraciche correttamente, garantire la sicurezza, collaborare con il team e segnalare segni di ripresa o complicanze."
+            },
+            {
+                question: "Quale è un’indicazione per eseguire la RCP?",
+                options: ["Ittero", "Arresto cardiaco", "Poliuria"],
+                correct: "Arresto cardiaco",
+                explanation: "L’arresto cardiaco, caratterizzato dall’assenza di polso e respirazione, è un’indicazione tipica per eseguire la RCP, per ripristinare la circolazione e l’ossigenazione. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono verificare l’assenza di polso, iniziare le compressioni toraciche, collaborare con il team e segnalare all’infermiere segni di ripresa o complicanze."
+            },
+            {
+                question: "Cos’è l’aterosclerosi?",
+                options: ["Un accumulo di liquido nei vasi", "Un deposito di placche nelle arterie", "Un’infezione dei vasi sanguigni"],
+                correct: "Un deposito di placche nelle arterie",
+                explanation: "L’aterosclerosi è un deposito di placche di colesterolo e altre sostanze nelle arterie, che causa restringimento e rigidità vascolare. È un fattore di rischio per infarto e ictus. Non è un’infezione né un accumulo di liquido. Gli OSS devono promuovere una dieta sana, monitorare i parametri vitali, incoraggiare l’attività fisica e segnalare sintomi come dolore toracico o claudicatio."
+            },
+            {
+                question: "Quale è un segno tipico dell’aterosclerosi avanzata?",
+                options: ["Claudicatio intermittens", "Oliguria", "Ittero"],
+                correct: "Claudicatio intermittens",
+                explanation: "La claudicatio intermittens, ovvero dolore muscolare agli arti inferiori durante l’attività fisica, è un segno tipico dell’aterosclerosi avanzata, dovuta al ridotto flusso sanguigno. L’oliguria (ridotta produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono osservare i sintomi durante l’attività, monitorare la cute, promuovere il movimento e segnalare all’infermiere sintomi come ulcere o dolore persistente."
+            },
+            {
+                question: "Cos’è la valvulopatia?",
+                options: ["Un accumulo di liquido nel cuore", "Un’alterazione delle valvole cardiache", "Un’infezione del muscolo cardiaco"],
+                correct: "Un’alterazione delle valvole cardiache",
+                explanation: "La valvulopatia è un’alterazione delle valvole cardiache (stenosi o insufficienza), spesso causata da febbre reumatica, infezioni o invecchiamento. Provoca dispnea, stanchezza e soffi cardiaci. Non è un’infezione (miocardite) né un accumulo di liquido (versamento pericardico). Gli OSS devono monitorare i parametri vitali, osservare i sintomi, garantire il riposo e segnalare segni come edema o sincope."
+            },
+            {
+                question: "Quale è un segno tipico della stenosi aortica?",
+                options: ["Ittero", "Soffio sistolico", "Poliuria"],
+                correct: "Soffio sistolico",
+                explanation: "Il soffio sistolico, spesso rilevato all’auscultazione, è un segno tipico della stenosi aortica, accompagnato da dispnea, angina o sincope. La poliuria (aumento della produzione di urina) e l’ittero (colorazione giallastra della pelle) non sono correlati. Gli OSS devono monitorare la frequenza cardiaca, osservare i sintomi da sforzo, garantire il comfort e segnalare all’infermiere sintomi come sincope o dispnea grave."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
